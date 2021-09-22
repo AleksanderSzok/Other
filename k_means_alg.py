@@ -1,5 +1,6 @@
 import numpy as np
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 class PointsMap:
     def __init__(self, lenght: int = 100, width: int = 100, size: int = 20, map_point=None):
@@ -19,8 +20,7 @@ class PointsMap:
             random_index = np.random.choice(self.size, size=k_value, replace=False)
             return self.map_point[random_index,:]
 
-# PointsMap(map_point= ...)
-# PointsMap.choose_centroids()
+
 class KZones:
     def __init__(self, lenght: int = 100, size: int = 20, k_value: int = 3):
         self.lenght = lenght
@@ -48,4 +48,19 @@ class KZones:
         for i in range(self.k_value):
             tmp = self.points_set[assignment_list == i].mean(axis=0)
             new_centroid_list = np.append(new_centroid_list, [tmp], axis=0)
-        return new_centroid_list[1:]
+        return np.around(new_centroid_list[1:], decimals=2)
+
+    def choose_final_centroids(self):
+        tmp_centroids = self.new_centroids()
+        while not np.array_equal(self.centroids, tmp_centroids):
+            self.centroids = tmp_centroids
+            tmp_centroids = self.new_centroids()
+
+    def points_set_flatten_to_plot(self):
+        flatten_array = self.points_set.flatten('F').copy()
+        return flatten_array[:int(len(flatten_array)/2)], flatten_array[int(len(flatten_array)/2):]
+
+    def plot_points_set(self):
+        x, y = self.points_set_flatten_to_plot()
+        plt.scatter(x, y)
+        plt.show()

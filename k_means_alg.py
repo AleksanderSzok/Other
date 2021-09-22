@@ -1,6 +1,7 @@
 import numpy as np
-import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+
 
 class PointsMap:
     def __init__(self, lenght: int = 100, width: int = 100, size: int = 20, map_point=None):
@@ -56,11 +57,24 @@ class KZones:
             self.centroids = tmp_centroids
             tmp_centroids = self.new_centroids()
 
-    def points_set_flatten_to_plot(self):
-        flatten_array = self.points_set.flatten('F').copy()
+    @staticmethod
+    def points_set_flatten_to_plot(points):
+        flatten_array = points.flatten('F').copy()
         return flatten_array[:int(len(flatten_array)/2)], flatten_array[int(len(flatten_array)/2):]
 
     def plot_points_set(self):
-        x, y = self.points_set_flatten_to_plot()
-        plt.scatter(x, y)
+        assignment_array = np.array(self.assign_point_to_zone())
+        colors = cm.rainbow(np.linspace(0, 1, self.k_value))
+        for i in range(self.k_value):
+            tmp = self.points_set[assignment_array == i]
+            x, y = self.points_set_flatten_to_plot(tmp)
+            plt.scatter(x, y, color=colors[i])
         plt.show()
+        plt.savefig("k_means_{}.png".format(self.k_value))
+
+
+# create sample:
+k_zone = KZones(lenght=100, size=150, k_value=3)
+k_zone.choose_final_centroids()
+k_zone.plot_points_set()
+

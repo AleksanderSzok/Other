@@ -10,4 +10,4 @@ k=3:
 
 k=4:
 
-![alt text](pictures/k_means_4.png)
+![alt text](pictures/k_mean_4.png)

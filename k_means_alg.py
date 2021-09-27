@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from sklearn.datasets import make_blobs
 
 
 class PointsMap:
@@ -22,7 +23,7 @@ class PointsMap:
             return self.map_point[random_index,:]
 
 
-class KZones:
+class KClusters:
     def __init__(self, lenght: int = 100, size: int = 20, k_value: int = 3):
         self.lenght = lenght
         self.size = size
@@ -34,7 +35,7 @@ class KZones:
         points_map_instance.bind_created_map()
         return points_map_instance.map_point, points_map_instance.choose_centroids(self.k_value)
 
-    def assign_point_to_zone(self):
+    def assign_point_to_cluster(self):
         assignment_list = []
         for elem in self.points_set:
             tmp_list = []
@@ -44,7 +45,7 @@ class KZones:
         return assignment_list
 
     def new_centroids(self):
-        assignment_list = np.array(self.assign_point_to_zone()) # todo change to array in assign_point_to_zone method
+        assignment_list = np.array(self.assign_point_to_cluster()) # todo change to array in assign_point_to_zone method
         new_centroid_list = np.empty((1,2), dtype=int)
         for i in range(self.k_value):
             tmp = self.points_set[assignment_list == i].mean(axis=0)
@@ -63,7 +64,7 @@ class KZones:
         return flatten_array[:int(len(flatten_array)/2)], flatten_array[int(len(flatten_array)/2):]
 
     def plot_points_set(self):
-        assignment_array = np.array(self.assign_point_to_zone())
+        assignment_array = np.array(self.assign_point_to_cluster())
         colors = cm.rainbow(np.linspace(0, 1, self.k_value))
         for i in range(self.k_value):
             tmp = self.points_set[assignment_array == i]
@@ -74,7 +75,12 @@ class KZones:
 
 
 # create sample:
-k_zone = KZones(lenght=100, size=150, k_value=3)
-k_zone.choose_final_centroids()
-k_zone.plot_points_set()
-
+X, y_true = make_blobs(n_samples=300, centers=4,
+                       cluster_std=0.60, random_state=0)
+points_m = PointsMap(size=len(X), map_point=X)
+points_m.choose_centroids(k_value=4)
+k_cluster = KClusters(lenght=200, size=300, k_value=4)
+k_cluster.points_set = points_m.map_point
+k_cluster.centroids = points_m.choose_centroids(k_value=4)
+k_cluster.choose_final_centroids()
+k_cluster.plot_points_set()

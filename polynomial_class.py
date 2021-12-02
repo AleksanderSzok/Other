@@ -1,4 +1,4 @@
-lass Polynominal:
+class Polynominal:
     def __init__(self, *args):
         if len(args) == 0:
             setattr(self, "attr0", 0)

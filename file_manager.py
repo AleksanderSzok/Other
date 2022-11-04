@@ -56,7 +56,7 @@ class FileManager:
                 os.makedirs(dir_path)
             except FileExistsError:
                 pass
-            FileStats.create_dirs(number_of_folders, levels - 1, path=dir_path)
+            FileManager.create_dirs(number_of_folders, levels - 1, path=dir_path)
 
     def __str__(self):
         return "".join([str(entry) for entry in self.entries])
@@ -67,7 +67,7 @@ class FileManager:
         return sorted(self.entries, reverse=True)[:count]
 
 
-file_stats = FileStats()
+file_stats = FileManager()
 # file_stats.get_files_names()
 # print(file_stats)
 # try:

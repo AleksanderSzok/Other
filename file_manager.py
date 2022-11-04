@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
@@ -14,10 +14,10 @@ class FileObj:
     modified: datetime
     is_directory: bool
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         return self.created < other.created
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f""""
             Name: {self.name}
             Path: {self.path}
@@ -32,7 +32,7 @@ class FileManager:
     def __init__(self):
         self.entries: List[FileObj] = []
 
-    def get_files_names(self, path=os.getcwd()):
+    def get_files_names(self, path: str = os.getcwd()) -> None:
         for root, dirs, files in os.walk(path):
             for name in files + dirs:
                 new_path = Path(root) / name
@@ -47,7 +47,9 @@ class FileManager:
                 self.entries.append(entry)
 
     @staticmethod
-    def create_dirs(number_of_folders, levels=2, path=Path(os.getcwd())):
+    def create_dirs(
+        number_of_folders: int, levels: int = 2, path: Path = Path(os.getcwd())
+    ) -> None:
         if levels == 0:
             return
         for i in range(number_of_folders):
@@ -58,10 +60,10 @@ class FileManager:
                 pass
             FileManager.create_dirs(number_of_folders, levels - 1, path=dir_path)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "".join([str(entry) for entry in self.entries])
 
-    def sort_file_stats(self, count=None):
+    def sort_file_stats(self, count: Optional[int] = None) -> List[FileObj]:
         if not count:
             count = len(self.entries)
         return sorted(self.entries, reverse=True)[:count]

@@ -55,6 +55,8 @@ class FileManager:
         for i in range(number_of_folders):
             dir_path = Path(path) / chr(i + 65)
             try:
+                os.rename(Path(path) / chr(i + 97), dir_path)
+            except FileNotFoundError:
                 os.makedirs(dir_path)
             except FileExistsError:
                 pass
@@ -77,4 +79,4 @@ file_stats = FileManager()
 # except IndexError:
 #     number_of_entries = None
 # print(file_stats.sort_file_stats(number_of_entries))
-file_stats.create_dirs(1)
+file_stats.create_dirs(2)

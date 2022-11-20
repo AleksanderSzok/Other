@@ -1,5 +1,8 @@
 from collections import namedtuple
+from dataclasses import dataclass
 from math import sqrt, inf
+import heapq
+from typing import Optional
 
 Point = namedtuple("Point", ["x", "y"])
 
@@ -20,7 +23,7 @@ g = Point(x=5, y=4)
 h = Point(x=8, y=3)
 i = Point(x=9, y=5)
 
-graph = {
+graph_example = {
     a: {b},
     b: {a, c, g},
     c: {b, d, f},
@@ -46,10 +49,7 @@ def dijkstra(graph, start, destiny):
     distances[start] = 0
     Q = list(graph.keys())
     previous = {}
-    stop = False
     while Q:
-        if stop:
-            break
         v = remove_from_queue(Q, distances)
         for neighbour in graph[v]:
             new_dist = distances[v] + dist(v, neighbour)
@@ -57,10 +57,59 @@ def dijkstra(graph, start, destiny):
                 distances[neighbour] = new_dist
                 previous[v] = neighbour
             if neighbour == destiny:
-                stop = True
-                break
-
-    return distances[destiny], previous
+                return distances[destiny], previous
 
 
-dijkstra(graph, a, e)
+@dataclass(order=True)
+class PrioritizedPoint:
+    distance: float = inf
+    point: Optional[Point] = None
+
+    def dist(self, other):
+        delta_x = abs(self.point.x - other.point.x)
+        delta_y = abs(self.point.y - other.point.y)
+        return sqrt(delta_y**2 + delta_x**2)
+
+
+def graph_to_prioritized(graph):
+    pts = {}
+    for point in graph.keys():
+        pts[point] = PrioritizedPoint(point=point)
+    prioritized_graph = {}
+    for key, items in graph.items():
+        neighbours = []
+        for item in items:
+            neighbours.append(pts[item])
+        prioritized_graph[key] = neighbours
+
+    return prioritized_graph
+
+
+def dijistra_heap(graph, start, destiny):
+    Q = []
+    heapq.heapify(Q)
+    points = list(graph.keys())
+    points.remove(start)
+    for point in points:
+        heapq.heappush(Q, PrioritizedPoint(point=point))
+    previous = {}
+    v = PrioritizedPoint(point=start, distance=0)
+    while Q:
+        for neighbour in graph[v.point]:
+            new_dist = v.distance + v.dist(neighbour)
+            if new_dist < neighbour.distance:
+                neighbour.distance = new_dist
+                updated_neighbour = PrioritizedPoint(
+                    distance=new_dist, point=neighbour.point
+                )
+                previous[v.point] = neighbour.point
+                heapq.heappush(Q, updated_neighbour)
+            if neighbour.point == destiny:
+                return neighbour.distance, previous
+        v = heapq.heappop(Q)
+
+
+# print(graph_to_prioritized(graph))
+
+print(dijkstra(graph_example, a, e))
+print(dijistra_heap(graph_to_prioritized(graph_example), a, e))

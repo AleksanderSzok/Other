@@ -11,7 +11,7 @@ class Polynominal:
                     length += 1
                 length -= 1
 
-            for idx, item in enumerate(args[:length+1]):
+            for idx, item in enumerate(args[: length + 1]):
                 setattr(self, "attr{}".format(idx), item)
 
     def get_degree(self):
@@ -24,7 +24,7 @@ class Polynominal:
     def __call__(self, arg):
         tmp = 0
         for num, key in enumerate(self.__dict__.keys()):
-            tmp += getattr(self, key)*arg**num
+            tmp += getattr(self, key) * arg**num
         return tmp
 
     def __eq__(self, other):
@@ -38,20 +38,20 @@ class Polynominal:
         one = list(self.__dict__.values())
         two = list(other.__dict__.values())
         if len(one) > len(two):
-            two.extend([0]*(length-len(two)))
+            two.extend([0] * (length - len(two)))
         elif len(one) < len(two):
-            one.extend(([0]*(length-len(one))))
+            one.extend(([0] * (length - len(one))))
         return self.from_iterable([sum(element) for element in zip(one, two)])
 
     def __mul__(self, other):
         one = list(self.__dict__.values())
         two = list(other.__dict__.values())
-        degree = len(one)+len(two) - 1
-        output = [0]*degree
+        degree = len(one) + len(two) - 1
+        output = [0] * degree
         for i in range(len(one)):
             for j in range(len(two)):
-                tmp = one[i]*two[j]
-                output[i+j] += tmp
+                tmp = one[i] * two[j]
+                output[i + j] += tmp
         return self.from_iterable(output)
 
     def __str__(self):
@@ -86,4 +86,4 @@ class Polynominal:
                     list_of_coefficients.append(f"- {negative_coeff}x ")
                 else:
                     list_of_coefficients.append(f"- {negative_coeff}x^{num} ")
-        return ''.join(list_of_coefficients).lstrip('+').lstrip().rstrip()
+        return "".join(list_of_coefficients).lstrip("+").lstrip().rstrip()

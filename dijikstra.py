@@ -2,8 +2,9 @@ from collections import namedtuple
 from dataclasses import dataclass
 from math import sqrt, inf
 import heapq
-from typing import Optional
+from typing import Optional, TypeVar, Dict, Set, List, Tuple
 
+T = TypeVar("T")
 Point = namedtuple("Point", ["x", "y"])
 
 
@@ -36,13 +37,15 @@ graph_example = {
 }
 
 
-def remove_from_queue(queue, distances):
+def remove_from_queue(queue: List[Point], distances: Dict[Point, float]) -> Point:
     queue.sort(key=lambda item: distances[item], reverse=True)
     nearest = queue.pop()
     return nearest
 
 
-def dijkstra(graph, start, destiny):
+def dijkstra(
+    graph: Dict[Point, Set[Point]], start: Point, destiny: Point
+) -> Tuple[float, Dict[Point, Point]]:
     distances = {}
     for key, _ in graph.items():
         distances[key] = inf
@@ -65,13 +68,15 @@ class PrioritizedPoint:
     distance: float = inf
     point: Optional[Point] = None
 
-    def dist(self, other):
+    def dist(self: T, other: T) -> float:
         delta_x = abs(self.point.x - other.point.x)
         delta_y = abs(self.point.y - other.point.y)
         return sqrt(delta_y**2 + delta_x**2)
 
 
-def graph_to_prioritized(graph):
+def graph_to_prioritized(
+    graph: Dict[Point, Set[Point]]
+) -> Dict[Point, List[PrioritizedPoint]]:
     pts = {}
     for point in graph.keys():
         pts[point] = PrioritizedPoint(point=point)
@@ -85,7 +90,9 @@ def graph_to_prioritized(graph):
     return prioritized_graph
 
 
-def dijistra_heap(graph, start, destiny):
+def dijkstra_heap(
+    graph: Dict[Point, List[PrioritizedPoint]], start: Point, destiny: Point
+) -> Tuple[float, Dict[Point, Point]]:
     Q = []
     heapq.heapify(Q)
     points = list(graph.keys())
@@ -95,6 +102,7 @@ def dijistra_heap(graph, start, destiny):
     previous = {}
     v = PrioritizedPoint(point=start, distance=0)
     while Q:
+        # if there's no access to destiny point, loop will not end
         for neighbour in graph[v.point]:
             new_dist = v.distance + v.dist(neighbour)
             if new_dist < neighbour.distance:
@@ -111,5 +119,5 @@ def dijistra_heap(graph, start, destiny):
 
 # print(graph_to_prioritized(graph))
 
-print(dijkstra(graph_example, a, e))
-print(dijistra_heap(graph_to_prioritized(graph_example), a, e))
+print(dijkstra(graph_example, start=a, destiny=e))
+print(dijkstra_heap(graph_to_prioritized(graph_example), start=a, destiny=e))

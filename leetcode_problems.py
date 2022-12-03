@@ -26,7 +26,7 @@ def combination_sum(
         l.remove(elem)
 
 
-print(combinationSum([2, 3, 6, 7], 7))
+# print(combinationSum([2, 3, 6, 7], 7))
 
 
 # HackerRank kruskalmstrsub problem:
@@ -54,3 +54,45 @@ def kruskals(g_nodes, g_from, g_to, g_weight):
                     break
 
     return weights_of_edges
+
+
+def read_input():
+    values = []
+    with open("input.txt", "r") as f:
+        for line in f.readlines():
+            tmp = line.strip()
+            a, b = tmp.split(" ")
+            values.append([int(a), int(b)])
+
+    return values
+
+
+# components-in-graph problem
+def componentsInGraph(gb):
+    gb.sort(key=lambda i: i[0])
+    n = gb[-1][0]
+    components = {i: {i} for i in range(1, n + 1)}
+    visited = {i: i for i in range(1, n + 1)}
+    for edge in gb:
+        node1, node2 = edge[0], edge[1]
+        if node2 in visited:
+            if visited[node2] != visited[node1]:
+                components[visited[node2]].update(components[visited[node1]])
+                tmp = visited[node1]
+                for v in components[visited[node1]]:
+                    visited[v] = visited[node2]
+                del components[tmp]
+        else:
+            if not components.get(node1):
+                components[visited[node1]].add(node2)
+                visited[node2] = visited[node1]
+            else:
+                components[node1].add(node2)
+                visited[node2] = node1
+
+    val = components.values()
+    comp_sizes = list(map(lambda x: len(x), filter(lambda i: len(i) > 1, val)))
+    return min(comp_sizes), max(comp_sizes)
+
+
+print(componentsInGraph(read_input()))

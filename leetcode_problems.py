@@ -96,3 +96,34 @@ def componentsInGraph(gb):
 
 
 print(componentsInGraph(read_input()))
+
+
+# 437. Path Sum III
+from collections import defaultdict
+
+
+class Solution:
+    def __init__(self):
+        self.output = 0
+
+    def pathSum(self, root, targetsum):
+        visited_values = defaultdict(lambda: 0)
+
+        def path_sum(root, targetsum, parent_value):
+            if not root:
+                return
+            root.val += parent_value
+            if root.val == targetsum:
+                self.output += 1
+            if (root.val - targetsum) in visited_values:
+                self.output += visited_values[root.val - targetsum]
+            visited_values[root.val] += 1
+
+            path_sum(root.left, targetsum, root.val)
+            path_sum(root.right, targetsum, root.val)
+
+            visited_values[root.val] -= 1
+
+        path_sum(root=root, targetsum=targetsum, parent_value=0)
+
+        return self.output

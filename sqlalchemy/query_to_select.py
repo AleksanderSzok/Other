@@ -74,5 +74,5 @@ class QueryToSelect:
 
 
 if __name__ == "__main__":
-    convert = QueryToSelect(path_to_files="./pictures/")
+    convert = QueryToSelect()
     convert.process_files()

@@ -45,7 +45,7 @@ class QueryToSelect:
     def pattern_match_group(self, pattern):
         return (
             pattern.group("first")
-            + self.second_group_map[pattern.group("second")]
+            + self.second_group_map[pattern.group("fourth")]
             + pattern.group("third")
             + self.fourth_group_map[pattern.group("fourth")]
         )
@@ -74,5 +74,5 @@ class QueryToSelect:
 
 
 if __name__ == "__main__":
-    convert = QueryToSelect()
+    convert = QueryToSelect(path_to_files="./pictures/")
     convert.process_files()

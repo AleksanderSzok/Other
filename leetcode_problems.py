@@ -127,3 +127,26 @@ class Solution:
         path_sum(root=root, targetsum=targetsum, parent_value=0)
 
         return self.output
+
+
+# 6. Zigzag Conversion
+def convert(s: str, numRows: int) -> str:
+    if numRows == 1:
+        return s
+    length = len(s)
+    i, j, n = 0, 0, 0
+    out = []
+    while n < length:
+        out.append((i, j, s[n]))
+        i += 1
+        n += 1
+        if i == numRows - 1:
+            while i > 0 and n < length:
+                out.append((i, j, s[n]))
+                i -= 1
+                j += 1
+                n += 1
+
+    out = sorted(out)
+
+    return "".join(list(zip(*out))[2])

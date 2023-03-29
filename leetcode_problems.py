@@ -150,3 +150,28 @@ def convert(s: str, numRows: int) -> str:
     out = sorted(out)
 
     return "".join(list(zip(*out))[2])
+
+
+# 24. Swap nodes in pairs
+def swapPairs(head: Optional[ListNode]) -> Optional[ListNode]:
+    if not head:
+        return None
+    if head.next:
+        h = head.next
+    else:
+        return head
+
+    start = ListNode(next=head)
+
+    while head and head.next:
+        tmp = head.next
+        if head.next and head.next.next:
+            head.next = head.next.next
+        else:
+            head.next = None
+        start.next = tmp
+        tmp.next = head
+        start = head
+        head = head.next
+
+    return h

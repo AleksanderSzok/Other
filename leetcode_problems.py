@@ -175,3 +175,30 @@ def swapPairs(head: Optional[ListNode]) -> Optional[ListNode]:
         head = head.next
 
     return h
+
+
+# 32 Longest valid parentheses
+def longestValidParentheses(s: str) -> int:
+    if s == "":
+        return 0
+    stack = []
+    longest = 0
+    start = 0
+
+    for indx, element in enumerate(s):
+        if element == "(":
+            stack.append(("(", indx))
+        else:
+            if not stack:
+                start = indx + 1
+            else:
+                stack.pop()
+                if not stack:
+                    l = indx - start + 1
+                else:
+                    l = indx - stack[-1][1]
+
+                if l > longest:
+                    longest = l
+
+    return longest
